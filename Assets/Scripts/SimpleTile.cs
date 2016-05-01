@@ -30,7 +30,7 @@ public class SimpleTile : Tile
 
     public void UpdateSprite()
     {
-        sprite = Sprite.Create(texture, new Rect((Vector2)(pos * dim), (Vector2)dim), new Vector2(0, 0));
+        sprite = Sprite.Create(texture, new Rect((Vector2)(pos * dim), (Vector2)dim), new Vector2(0.5f, 0.5f));
     }
 
     public override void Update ()

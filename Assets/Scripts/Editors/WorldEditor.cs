@@ -12,6 +12,7 @@ public class WorldEditor : Editor
     {
         World world = (World)target;
         world.dim = (IntVector2)EditorGUILayout.Vector2Field("Dim", (Vector2)world.dim);
+        world.tileDim = (IntVector2)EditorGUILayout.Vector2Field("Tile Dim", (Vector2)world.tileDim);
         pos = (IntVector2)EditorGUILayout.Vector2Field("Pos", (Vector2)pos);
         if(GUILayout.Button("Add"))
         {

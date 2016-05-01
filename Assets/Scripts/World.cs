@@ -17,8 +17,13 @@ public class World : MonoBehaviour {
     [SerializeField]
     private TileRenderer[] m_children;
 
+    [SerializeField]
+    private IntVector2 m_tileDim;
+
     // Property for m_dim, the set triggers an update of the children if needed
     public IntVector2 dim { get { return m_dim; } set { if (value != m_dim) { UpdateDimensions(value); } } }
+    // Property for m_dim, the set triggers an update of the children if needed
+    public IntVector2 tileDim { get { return m_tileDim; } set { if (value != m_tileDim) { UpdateTileDimensions(value); } } }
 
     public void SetTile(IntVector2 pos, Tile tile)
     {
@@ -34,7 +39,8 @@ public class World : MonoBehaviour {
             TileRenderer tileRenderer = instance.GetComponent<TileRenderer>();
             tileRenderer.Init(tile);
             instance.transform.SetParent(transform);
-            instance.transform.localPosition = (Vector2)(new IntVector2(pos.x, -pos.y) * tile.dim);
+            instance.transform.position = GetTilePos(pos);
+            instance.transform.localScale = 100 * new Vector2((float)tileDim.x / tile.dim.x, (float)tileDim.y / tile.dim.y);
             instance.name = "Tile " + pos.x + " " + pos.y;
             m_children[pos.x + pos.y * m_dim.x] = tileRenderer;
         }
@@ -89,6 +95,11 @@ public class World : MonoBehaviour {
         m_tiles = tilesBuffer;
         m_dim = newDim;
     }
+
+    void UpdateTileDimensions(IntVector2 tileDim)
+    {
+        m_tileDim = tileDim;
+    }
 	
 	void Update ()
     {
@@ -98,17 +109,35 @@ public class World : MonoBehaviour {
     public void OnDrawGizmos()
     {
         Gizmos.color = new Color(1, 1, 1, 0.2f);
+        Rect currentBounds = bounds;
+        Vector2 tileDim = (Vector2)m_tileDim;
+        Vector2 tileX = new Vector2(tileDim.x, 0);
+        Vector2 tileY = new Vector2(0, tileDim.y);
+        Vector2 topLeftPos = (Vector2)transform.position - new Vector2(tileDim.x * (float)dim.x/2, tileDim.y * (float)dim.y/2);
+
         for (int i = 0; i <= dim.x; i++)
-        {
-            Gizmos.DrawLine(transform.position + new Vector3(i * m_tiles[0].dim.x, m_tiles[0].dim.y), transform.position + new Vector3(i * m_tiles[0].dim.x, -(dim.y-1) * m_tiles[0].dim.y));
-        }
+            Gizmos.DrawLine(topLeftPos - tileDim/ 2 + tileX * i, topLeftPos + tileX * i + tileY * dim.y - tileDim / 2);
+        for (int i = 0; i <= dim.y; i++)
+            Gizmos.DrawLine(topLeftPos - tileDim / 2 + tileY * i, topLeftPos + tileY * i + tileX * dim.x - tileDim / 2);
 
     }
 
-    private Rect Bounds()
+    private Rect bounds
     {
-        Vector2 topLeftPos = (Vector2)transform.position - (Vector2)(m_tiles[0].dim * m_dim / 2);
-        Vector2 rectDim = (Vector2)(m_tiles[0].dim * m_dim);
-        return new Rect(topLeftPos, rectDim);
+        get
+        {
+            Vector2 topLeftPos = (Vector2)transform.position - new Vector2(tileDim.x * (float)dim.x / 2, tileDim.y * (float)dim.y / 2);
+            Vector2 rectDim = (Vector2)(tileDim * dim);
+            return new Rect(topLeftPos, rectDim);
+        }
+    }
+
+    Vector2 GetTilePos(IntVector2 pos)
+    {
+        Vector2 tileDim = (Vector2)m_tileDim;
+        Vector2 tileX = new Vector2(tileDim.x, 0);
+        Vector2 tileY = new Vector2(0, tileDim.y);
+        Vector2 topLeftPos = (Vector2)transform.position - new Vector2(tileDim.x * (float)dim.x / 2, -tileDim.y * (float)dim.y / 2);
+        return topLeftPos + tileX * pos.x - tileY * (pos.y+1);
     }
 }
