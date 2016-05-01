@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecf7d630a60459949b982d1eb6b406e6, type: 3}
+  m_Name: Fence Tileset
+  m_EditorClassIdentifier: 
+  m_texture: {fileID: 2800000, guid: dac3bb29fcf08ec45b0b5a6d01719459, type: 3}
+  m_tileDim:
+    x: 16
+    y: 16
+  m_tileCount:
+    x: 11
+    y: 10
