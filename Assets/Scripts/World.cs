@@ -25,6 +25,9 @@ public class World : MonoBehaviour {
     // Property for m_dim, the set triggers an update of the children if needed
     public IntVector2 tileDim { get { return m_tileDim; } set { if (value != m_tileDim) { UpdateTileDimensions(value); } } }
 
+    // Used only in the editor
+    public IntVector2 hoveredCell;
+
     public void SetTile(IntVector2 pos, Tile tile)
     {
         m_tiles[pos.x + pos.y * m_dim.x] = tile;
@@ -79,6 +82,11 @@ public class World : MonoBehaviour {
                 {
                     tilesBuffer[i + j * newDim.x] = m_tiles[i + j * dim.x];
                     childrenBuffer[i + j * newDim.x] = m_children[i + j * dim.x];
+                    if(childrenBuffer[i+j * newDim.x] != null)
+                    {
+                        childrenBuffer[i + j * newDim.x].transform.position = GetTilePos(new IntVector2(i, j), newDim);
+                        childrenBuffer[i + j * newDim.x].transform.localScale = 100 * new Vector2((float)tileDim.x / tilesBuffer[i+j*newDim.x].dim.x, (float)tileDim.y / tilesBuffer[i + j * newDim.x].dim.y);
+                    }
                 }
             }
         }
@@ -119,7 +127,9 @@ public class World : MonoBehaviour {
             Gizmos.DrawLine(topLeftPos - tileDim/ 2 + tileX * i, topLeftPos + tileX * i + tileY * dim.y - tileDim / 2);
         for (int i = 0; i <= dim.y; i++)
             Gizmos.DrawLine(topLeftPos - tileDim / 2 + tileY * i, topLeftPos + tileY * i + tileX * dim.x - tileDim / 2);
-
+        Gizmos.color = new Color(1, 1, 1, 0.3f);
+        if(IsInsideBounds(hoveredCell))
+            Gizmos.DrawCube(GetTilePos(hoveredCell), new Vector3(tileDim.x, tileDim.y, 1));
     }
 
     private Rect bounds
@@ -132,12 +142,41 @@ public class World : MonoBehaviour {
         }
     }
 
-    Vector2 GetTilePos(IntVector2 pos)
+    public Vector2 GetTilePos(IntVector2 pos)
     {
         Vector2 tileDim = (Vector2)m_tileDim;
         Vector2 tileX = new Vector2(tileDim.x, 0);
         Vector2 tileY = new Vector2(0, tileDim.y);
         Vector2 topLeftPos = (Vector2)transform.position - new Vector2(tileDim.x * (float)dim.x / 2, -tileDim.y * (float)dim.y / 2);
         return topLeftPos + tileX * pos.x - tileY * (pos.y+1);
+    }
+
+    public Vector2 GetTilePos(IntVector2 pos, IntVector2 dim)
+    {
+        Vector2 tileDim = (Vector2)m_tileDim;
+        Vector2 tileX = new Vector2(tileDim.x, 0);
+        Vector2 tileY = new Vector2(0, tileDim.y);
+        Vector2 topLeftPos = (Vector2)transform.position - new Vector2(tileDim.x * (float)dim.x / 2, -tileDim.y * (float)dim.y / 2);
+        return topLeftPos + tileX * pos.x - tileY * (pos.y + 1);
+    }
+
+    public IntVector2 GetTileAt(Vector2 pos)
+    {
+        Vector2 tileDim = (Vector2)m_tileDim;
+        Vector2 tileX = new Vector2(tileDim.x, 0);
+        Vector2 tileY = new Vector2(0, tileDim.y);
+        Vector2 topLeftPos = (Vector2)transform.position - new Vector2(tileDim.x * (float)dim.x / 2, -tileDim.y * (float)dim.y / 2) - tileDim/2;
+        Vector2 disp = pos - topLeftPos;
+        IntVector2 result = new IntVector2((int)(disp.x / tileDim.x), (int)(-disp.y / tileDim.y));
+        if (disp.x < 0)
+            result.x--;
+        if (disp.y > 0)
+            result.y--;
+        return result;
+    }
+
+    public bool IsInsideBounds(IntVector2 pos)
+    {
+        return pos.x >= 0 && pos.y >= 0 && pos.x < dim.x && pos.y < dim.y;
     }
 }

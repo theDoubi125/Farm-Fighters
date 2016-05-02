@@ -19,4 +19,30 @@ public class WorldEditor : Editor
             world.SetTile(pos, PaletteWindow.instance.GetSelectedTile());
         }
     }
+
+    public void OnSceneGUI()
+    {
+        HandleUtility.AddDefaultControl(GUIUtility.GetControlID(FocusType.Passive));
+        World world = (World)target;
+        if (Event.current.type == EventType.MouseMove)
+        {
+            Vector2 mousePos = Camera.current.ScreenToWorldPoint(new Vector2(Event.current.mousePosition.x, Camera.current.pixelHeight - Event.current.mousePosition.y));
+            world.hoveredCell = world.GetTileAt(mousePos);
+            EditorUtility.SetDirty(target);
+            Event.current.Use();
+        }
+        if(Event.current.type == EventType.MouseDown || Event.current.type == EventType.MouseDrag)
+        {
+            Vector2 mousePos = Camera.current.ScreenToWorldPoint(new Vector2(Event.current.mousePosition.x, Camera.current.pixelHeight - Event.current.mousePosition.y));
+            IntVector2 cell = world.GetTileAt(mousePos);
+            if(Event.current.button == 0)
+                world.SetTile(cell, PaletteWindow.instance.GetSelectedTile());
+            else
+                world.SetTile(cell, null);
+            Event.current.Use();
+        }
+        //if(Event.current.type != EventType.Repaint && Event.current.type != EventType.Layout)
+        //    Debug.Log(Event.current.type);
+    }
 }
+

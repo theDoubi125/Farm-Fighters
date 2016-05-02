@@ -30,7 +30,7 @@ public class SimpleTile : Tile
 
     public void UpdateSprite()
     {
-        sprite = Sprite.Create(texture, new Rect((Vector2)(pos * dim), (Vector2)dim), new Vector2(0.5f, 0.5f));
+        sprite = Sprite.Create(texture, new Rect(new Vector2(pos.x * dim.x, pos.y * dim.y + texture.height%dim.y), (Vector2)dim), new Vector2(0.5f, 0.5f));
     }
 
     public override void Update ()
@@ -40,6 +40,8 @@ public class SimpleTile : Tile
 
     public override Sprite GetSprite()
     {
+        Debug.Log(new Rect((Vector2)(pos * dim), (Vector2)dim));
+        Debug.Log(texture.height);
         if (sprite == null && texture != null)
             UpdateSprite();
         return sprite;
