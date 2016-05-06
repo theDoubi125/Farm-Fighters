@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Collections;
+using System;
 
 [System.Serializable]
 public class SimpleTile : Tile
@@ -33,23 +34,13 @@ public class SimpleTile : Tile
         sprite = Sprite.Create(texture, new Rect(new Vector2(pos.x * dim.x, pos.y * dim.y + texture.height%dim.y), (Vector2)dim), new Vector2(0.5f, 0.5f));
     }
 
-    public override void Update ()
-    {
-
-    }
-
-    public override Sprite GetSprite()
+    public override Sprite GetSprite(bool[] neighbours)
     {
         Debug.Log(new Rect((Vector2)(pos * dim), (Vector2)dim));
         Debug.Log(texture.height);
         if (sprite == null && texture != null)
             UpdateSprite();
         return sprite;
-    }
-
-    public override void NeighbourChanged(IntVector2 pos)
-    {
-
     }
 
     public override Rect textureRect

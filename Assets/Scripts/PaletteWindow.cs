@@ -9,7 +9,7 @@ public class PaletteWindow : EditorWindow
     private Vector2 scrollPosition;
     private string[] assetGUIDs;
     private Tileset tileset;
-    private IntVector2 selectedTile, hoveredTile;
+    private IntVector2 selectedTileMin, selectedTileMax, hoveredTile;
     private IntVector2 mousePos = new IntVector2(0, 0);
     private static PaletteWindow m_instance;
     public static PaletteWindow instance { get { if (m_instance == null) m_instance = EditorWindow.GetWindow<PaletteWindow>("Palette", false); return m_instance; } }
@@ -63,8 +63,8 @@ public class PaletteWindow : EditorWindow
                 }
             }
             Handles.BeginGUI();
-            if(selectedTile != null)
-                DrawCell(rect.position, selectedTile, Color.red);
+            if(selectedTileMin != null && selectedTileMax != null)
+                DrawCells(rect.position, selectedTileMin, selectedTileMax, Color.red);
             if(hoveredTile != null && mousePos.x >= 0 && hoveredTile.x < tileset.tileCount.x && mousePos.y >= 0 && hoveredTile.y < tileset.tileCount.y)
                 FillCell(rect.position, hoveredTile, new Color(0.3f, 0.3f, 0.3f, 0.3f));
             Handles.EndGUI();
@@ -84,7 +84,17 @@ public class PaletteWindow : EditorWindow
                     break;
                 case EventType.MouseDown:
                     if (mousePos.x >= 0 && hoveredTile.x < tileset.tileCount.x && mousePos.y >= 0 && hoveredTile.y < tileset.tileCount.y)
-                        selectedTile = new IntVector2(hoveredTile.x, hoveredTile.y);
+                    {
+                        selectedTileMin = new IntVector2(hoveredTile.x, hoveredTile.y);
+                        selectedTileMax = new IntVector2(hoveredTile.x, hoveredTile.y);
+                    }
+                    //handlePosition = (Event.current.mousePosition - imageRect.position);
+                    break;
+                case EventType.MouseDrag:
+                    if (mousePos.x >= 0 && hoveredTile.x < tileset.tileCount.x && mousePos.y >= 0 && hoveredTile.y < tileset.tileCount.y)
+                    {
+                        selectedTileMax = new IntVector2(hoveredTile.x, hoveredTile.y);
+                    }
                     //handlePosition = (Event.current.mousePosition - imageRect.position);
                     break;
             }
@@ -103,15 +113,22 @@ public class PaletteWindow : EditorWindow
         Handles.DrawSolidRectangleWithOutline(new Rect(offset + new Vector2(pos.x * (tileset.tileDim.x+1), pos.y * (tileset.tileDim.y+1)), (Vector2)tileset.tileDim), col, new Color(0, 0, 0, 0));
     }
 
-    private void DrawCell(Vector2 offset, IntVector2 pos, Color col)
+    private void DrawCells(Vector2 offset, IntVector2 A, IntVector2 B, Color col)
     {
-        Handles.DrawSolidRectangleWithOutline(new Rect(offset + new Vector2(pos.x * (tileset.tileDim.x+1), pos.y * (tileset.tileDim.y+1)), (Vector2)tileset.tileDim), new Color(0, 0, 0, 0), col);
+        IntVector2 minPos = new IntVector2(Mathf.Min(A.x, B.x), Mathf.Min(A.y, B.y));
+        IntVector2 maxPos = new IntVector2(Mathf.Max(A.x, B.x), Mathf.Max(A.y, B.y));
+        Handles.DrawSolidRectangleWithOutline(new Rect(offset + new Vector2(minPos.x * (tileset.tileDim.x+1), minPos.y * (tileset.tileDim.y+1)), (Vector2)((tileset.tileDim + new IntVector2(1, 1)) * (maxPos - minPos + new IntVector2(1, 1)))), new Color(0, 0, 0, 0), col);
     }
 
-    public Tile GetSelectedTile()
+    public Tile GetSelectedTile(IntVector2 pos)
     {
+        IntVector2 selectionDim = selectedTileMax - selectedTileMin + new IntVector2(1, 1);
+        while (pos.x < 0)
+            pos.x += selectionDim.x;
+        while (pos.y < 0)
+            pos.y += selectionDim.y;
         if (tileset == null)
             return null;
-        return tileset.GetTile(selectedTile);
+        return tileset.GetTile(selectedTileMin + new IntVector2(pos.x % selectionDim.x, pos.y % selectionDim.y));
     }
 }

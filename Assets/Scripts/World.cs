@@ -28,8 +28,12 @@ public class World : MonoBehaviour {
     // Used only in the editor
     public IntVector2 hoveredCell;
 
+    private static IntVector2[] dirVecs = { new IntVector2(1, 0), new IntVector2(1, -1), new IntVector2(0, -1), new IntVector2(-1, -1), new IntVector2(-1, 0), new IntVector2(-1, 1), new IntVector2(0, 1), new IntVector2(1, 1)};
+
     public void SetTile(IntVector2 pos, Tile tile)
     {
+        if (pos.x < 0 || pos.y < 0 || pos.x >= dim.x || pos.y >= dim.y)
+            return;
         m_tiles[pos.x + pos.y * m_dim.x] = tile;
         if (m_children[pos.x + pos.y * m_dim.x] != null)
         {
@@ -47,26 +51,32 @@ public class World : MonoBehaviour {
             instance.name = "Tile " + pos.x + " " + pos.y;
             m_children[pos.x + pos.y * m_dim.x] = tileRenderer;
         }
+        for(int i=0; i<8; i++)
+        {
+            IntVector2 neighbourPos = pos + dirVecs[i];
+            if (GetChild(neighbourPos) != null)
+                GetChild(neighbourPos).UpdateNeighbour((i + 4) % 8, GetTile(pos));
+            if (GetChild(pos) != null)
+                GetChild(pos).UpdateNeighbour(i, GetTile(neighbourPos));
+        }
+    }
+
+    public TileRenderer GetChild(IntVector2 pos)
+    {
+        if (pos.x >= 0 && pos.y >= 0 && pos.x < m_dim.x && pos.y < m_dim.y)
+            return m_children[pos.x + pos.y * m_dim.x];
+        return null;
+    }
+
+    public Tile GetTile(IntVector2 pos)
+    {
+        if (pos.x >= 0 && pos.y >= 0 && pos.x < m_dim.x && pos.y < m_dim.y)
+            return m_tiles[pos.x + pos.y * m_dim.x];
+        return null;
     }
 
     public void OnEnable()
     {
-        /*m_children = new TileRenderer[dim.x * dim.y];
-        for(int i=0; i<dim.x; i++)
-        {
-            for(int j=0; j<dim.y; j++)
-            {
-                Tile tile = m_tiles[i + j * dim.x];
-                if(tile != null)
-                {
-                    Transform instance = Instantiate<Transform>(tile.prefab);
-                    TileRenderer tileRenderer = instance.GetComponent<TileRenderer>();
-                    tileRenderer.Init(tile);
-                    instance.transform.position = (Vector2)(new IntVector2(i, j) * dim);
-                    m_children[i + j * m_dim.x] = tileRenderer;
-                }
-            }
-        }*/
     }
 
     public void UpdateDimensions(IntVector2 newDim)

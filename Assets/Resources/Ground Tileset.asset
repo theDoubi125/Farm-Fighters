@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d603196677fbe964e8a80eb9c99d93a2, type: 3}
+  m_Name: Ground Tileset
+  m_EditorClassIdentifier: 
+  m_texture: {fileID: 2800000, guid: 5927e4c502968294a9b7a0fd7b6d29ce, type: 3}
+  m_tileDim:
+    x: 16
+    y: 16
+  m_tileCount:
+    x: 3
+    y: 1

@@ -8,6 +8,7 @@ using UnityEditor;
 public class WorldEditor : Editor
 {
     IntVector2 pos = new IntVector2(0, 0);
+    IntVector2 paintStartPos = null;
     public override void OnInspectorGUI()
     {
         World world = (World)target;
@@ -16,7 +17,7 @@ public class WorldEditor : Editor
         pos = (IntVector2)EditorGUILayout.Vector2Field("Pos", (Vector2)pos);
         if(GUILayout.Button("Add"))
         {
-            world.SetTile(pos, PaletteWindow.instance.GetSelectedTile());
+            world.SetTile(pos, PaletteWindow.instance.GetSelectedTile(new IntVector2(0, 0)));
         }
     }
 
@@ -36,7 +37,11 @@ public class WorldEditor : Editor
             Vector2 mousePos = Camera.current.ScreenToWorldPoint(new Vector2(Event.current.mousePosition.x, Camera.current.pixelHeight - Event.current.mousePosition.y));
             IntVector2 cell = world.GetTileAt(mousePos);
             if(Event.current.button == 0)
-                world.SetTile(cell, PaletteWindow.instance.GetSelectedTile());
+            {
+                if (Event.current.type == EventType.mouseDown)
+                    paintStartPos = cell;
+                world.SetTile(cell, PaletteWindow.instance.GetSelectedTile(cell-paintStartPos));
+            }
             else
                 world.SetTile(cell, null);
             Event.current.Use();

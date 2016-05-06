@@ -22,6 +22,11 @@ public class IntVector2{
         return new IntVector2(a.x - b.x, a.y - b.y);
     }
 
+    public static IntVector2 operator -(IntVector2 a)
+    {
+        return new IntVector2(-a.x, -a.y);
+    }
+
     public static IntVector2 operator *(IntVector2 a, IntVector2 b)
     {
         return new IntVector2(a.x * b.x, a.y * b.y);

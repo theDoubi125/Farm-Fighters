@@ -8,19 +8,19 @@ using UnityEditor;
 public class Tileset : UnityEngine.ScriptableObject
 {
     [SerializeField]
-    private Texture2D m_texture;
+    protected Texture2D m_texture;
     public Texture2D texture { get { return m_texture; } set { if (m_texture != value) { m_texture = value; ResetTiles(); } } }
 
     [SerializeField]
-    private IntVector2 m_tileDim = new IntVector2(16, 16);
+    protected IntVector2 m_tileDim = new IntVector2(16, 16);
 
-    private Tile[] m_tiles;
+    protected Tile[] m_tiles;
 
     [SerializeField]
-    private IntVector2 m_tileCount = new IntVector2(0, 0);
+    protected IntVector2 m_tileCount = new IntVector2(0, 0);
 
     public virtual Tile[] tiles { get { if (m_tiles == null) ResetTiles(); return m_tiles; } }
-
+    
     public IntVector2 tileDim { get { return m_tileDim; } set { if (value != m_tileDim) { m_tileDim = value; UpdateTiles(); } } }
     public IntVector2 tileCount
     {
@@ -35,7 +35,7 @@ public class Tileset : UnityEngine.ScriptableObject
 
     }
 
-    public void ResetTiles()
+    public virtual void ResetTiles()
     {
         if (texture == null || m_tileDim.x == 0 || m_tileDim.y == 0)
         {
@@ -62,7 +62,7 @@ public class Tileset : UnityEngine.ScriptableObject
         EditorUtility.SetDirty(this);
     }
 
-    public void UpdateTiles()
+    public virtual void UpdateTiles()
     {
         if (texture == null || m_tileDim.x == 0 || m_tileDim.y == 0)
         {
