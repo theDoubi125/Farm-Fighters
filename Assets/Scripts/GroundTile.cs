@@ -2,9 +2,12 @@
 using System.Collections;
 using System;
 
+[Serializable]
 public class GroundTile : Tile
 {
     private Transform tilePrefab;
+
+    [SerializeField]
     private Sprite[] sprites;
 
     [SerializeField]

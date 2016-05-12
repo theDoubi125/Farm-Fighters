@@ -19,6 +19,15 @@ public class WorldEditor : Editor
         {
             world.SetTile(pos, PaletteWindow.instance.GetSelectedTile(new IntVector2(0, 0)));
         }
+        for(int j=0; j<world.dim.y; j++)
+        {
+            EditorGUILayout.BeginHorizontal();
+            for (int i=0; i<world.dim.x; i++)
+            {
+                GUILayout.Label(""+world.GetTile(new IntVector2(i, j)));
+            }
+            EditorGUILayout.EndHorizontal();
+        }
     }
 
     public void OnSceneGUI()

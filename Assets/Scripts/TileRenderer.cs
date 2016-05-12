@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
+[Serializable]
 public class TileRenderer : MonoBehaviour
 {
     public Tile tile;
@@ -20,18 +22,14 @@ public class TileRenderer : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRenderer.sprite = tile.GetSprite(neighbours);
     }
-	
-	void Update ()
-    {
-	    
-	}
 
     public void UpdateNeighbour(int dir, Tile tile)
     {
         if (tile == null)
             neighbours[dir] = false;
-        if (tile == this.tile)
-            neighbours[dir] = tile == this.tile;
+        else neighbours[dir] = tile == this.tile;
+        if (spriteRenderer == null)
+            spriteRenderer = GetComponent<SpriteRenderer>();
         if(this.tile != null)
             spriteRenderer.sprite = this.tile.GetSprite(neighbours);
     }

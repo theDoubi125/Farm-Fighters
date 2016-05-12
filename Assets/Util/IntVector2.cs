@@ -81,4 +81,14 @@ public class IntVector2{
     {
         return "(" + x + ", " + y + ")";
     }
+
+    public override bool Equals(object obj)
+    {
+        return this == (IntVector2)obj;
+    }
+
+    public override int GetHashCode()
+    {
+        return x+y*10000;
+    }
 }
