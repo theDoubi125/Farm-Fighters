@@ -6,9 +6,8 @@ using UnityEngine;
 
 namespace DEngine.DayNightCycle
 {
-    public class GlobalClock : MonoBehaviour
+    public class GlobalClock : MonoBehaviour, IGlobalClock
     {
-
         public enum KeyTimeOfDay
         {
             MORNING,
@@ -22,6 +21,7 @@ namespace DEngine.DayNightCycle
         public static float SECONDS_IN_DAYS = 86400.0f;
 
         public static float MIDNIGHT = 0;
+        public static float MIDNIGHT2 = 24 * SECONDS_IN_HOURS;
         public static float MIDDAY = 12 * SECONDS_IN_HOURS;
 
         [SerializeField]
