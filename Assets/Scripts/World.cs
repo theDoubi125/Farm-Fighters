@@ -8,6 +8,9 @@ public class World : MonoBehaviour {
     [SerializeField]
     private IntVector2 m_dim;
 
+    [SerializeField]
+    private int m_layers;
+
     // The tiles data (different from the actual GameObjects, contains only data)
     // It is what is serialized and saved (children GameObjects are created during scene load)
     [SerializeField]

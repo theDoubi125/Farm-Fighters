@@ -58,8 +58,11 @@ public class PaletteWindow : EditorWindow
             {
                 for (int j = 0; j < tileset.tileCount.y; j++)
                 {
-                    tileRect.position = rect.position + (Vector2)((tileset.tileDim + new IntVector2(1, 1)) * new IntVector2(i, tileset.tileCount.y - 1 - j));
-                    GUI.DrawTextureWithTexCoords(tileRect, tileset.GetTile(i, j).texture, tileset.GetTile(i, j).textureRect);
+                    if(tileset.GetTile(i, j) != null)
+                    {
+                        tileRect.position = rect.position + (Vector2)((tileset.tileDim + new IntVector2(1, 1)) * new IntVector2(i, tileset.tileCount.y - 1 - j));
+                        GUI.DrawTextureWithTexCoords(tileRect, tileset.GetTile(i, j).texture, tileset.GetTile(i, j).textureRect);
+                    }
                 }
             }
             Handles.BeginGUI();
