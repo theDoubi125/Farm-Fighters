@@ -20,14 +20,22 @@ public class DayNightEffect : MonoBehaviour {
     {
         m_material = new Material(Shader.Find("Hidden/DayNightCycleEffect"));
         m_lightMaterial = new Material(Shader.Find("Hidden/LightEffect"));
-        if (m_lightmap != null)
-            m_lightmap.Release();
 
-        m_lightmap = new RenderTexture(Screen.width, Screen.height, 0);
+        m_lightMaterial.SetFloat("_AspectRatioInv", (float)Screen.height / (float)Screen.width);
     }
 
     private void OnRenderImage(RenderTexture _source, RenderTexture _destination)
     {
+        if(m_lightmap == null || (m_lightmap.width != Screen.width || m_lightmap.height != Screen.height))
+        {
+            if (m_lightmap != null)
+                m_lightmap.Release();
+            
+            m_lightmap = new RenderTexture(Screen.width, Screen.height, 0);
+            m_lightMaterial.SetFloat("_AspectRatioInv", (float)Screen.height / (float)Screen.width);
+        }
+
+
         float seconds_since_start = GameManager.Instance.GlobalClock.GetSecondsSinceStartOfDay();
         if(seconds_since_start <= GlobalClock.MIDDAY)
         {
@@ -39,7 +47,7 @@ public class DayNightEffect : MonoBehaviour {
         }
 
         Vector3 lightPosition = Camera.main.WorldToScreenPoint(m_light.transform.position);
-        Vector2 lightPosNormalized = new Vector2(lightPosition.x / Screen.width, 1.0f - (lightPosition.y / Screen.height));
+        Vector2 lightPosNormalized = new Vector2(lightPosition.x / Screen.width, (1.0f - (lightPosition.y / Screen.height)));
         m_lightMaterial.SetVector("_LightPosition", new Vector4(lightPosNormalized.x, lightPosNormalized.y));
         m_lightMaterial.SetColor("_LightColor", m_light.color);
         m_lightMaterial.SetFloat("_LightRange", m_light.range);
