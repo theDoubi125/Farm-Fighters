@@ -3,9 +3,8 @@
 	Properties
 	{
 		_MainTex ("Base (RGB)", 2D) = "white" {}
-		_GradientTex("Gradient", 2D) = "white" {}
-
-		_TOD("Black & White blend", Range(0, 1)) = 0
+		_LightMap("LightMap", 2D) = "black" {}
+		_Color("SkyColor", Color) = (1.0, 1.0, 1.0, 1.0)
 	}
 	SubShader
 	{
@@ -18,15 +17,15 @@
 			#include "UnityCG.cginc"
 			
 			uniform sampler2D _MainTex;
-			uniform sampler2D _GradientTex;
-			uniform float _TOD;
+			uniform sampler2D _LightMap;
+			uniform fixed4 _Color;
 
 			fixed4 frag (v2f_img i) : COLOR
 			{
 				fixed4 col = tex2D(_MainTex, i.uv);
-				fixed4 grad = tex2D(_GradientTex, fixed2(_TOD, 0));
+				fixed4 light = tex2D(_LightMap, i.uv);
 
-				col = grad * col;
+				col = clamp(_Color*col + col*light, 0.0, 1.0);
 				return col;
 			}
 			ENDCG
